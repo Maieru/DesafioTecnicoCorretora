@@ -50,6 +50,10 @@ CREATE TABLE [dbo].[tbOperacoes] (
 );
 GO
 
+CREATE NONCLUSTERED INDEX idx_tbOperacoes_usuario_ativo_data
+ON tbOperacoes (usuario_id, ativo_id, data_hora)
+GO
+
 CREATE TABLE [dbo].[tbPosicoes] (
     [id]            INT IDENTITY(1,1) PRIMARY KEY,
     [usuario_id]    UNIQUEIDENTIFIER  NOT NULL REFERENCES tbUsuarios(id),
