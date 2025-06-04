@@ -6,5 +6,5 @@
     [preco_unitario]	DECIMAL(10,2)    NOT NULL,
     [tipo_operacao]		CHAR(1)          NOT NULL,
     [corretagem]		DECIMAL(10,2)    NOT NULL,
-    [data_hora]			DATETIME         NOT NULL
+    [data_hora]			DATETIME2        NOT NULL
 );
