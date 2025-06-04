@@ -4,6 +4,8 @@ Para criar todas as tabelas e o banco de dados `corretora`, basta executar o scr
 
 Esse arquivo contém todos os comandos necessários para criar o banco e suas tabelas de forma consolidada e automatizada. **Os scripts foram feitos para SQL Server**.
 
+<br/>
+<br/>
 
 # 📋 Tabelas e Estrutura
 
@@ -16,7 +18,11 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 | `email`           | `NVARCHAR(200)`    | E-mail do usuário. Usar `NVARCHAR(MAX)` seria menos performático, mas permitiria qualquer tamanho de e-mail.                                                   |
 | `perc_corretagem` | `DECIMAL(5,2)`     | Percentual de corretagem (ex: 1.50 = 1,5%). Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                                        |
 
+<br/>
+
 ---
+
+<br/>
 
 ### `tbAtivos`
 
@@ -26,7 +32,11 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 | `codigo`| `NVARCHAR(10)`  | Código do ativo (ex: PETR4). Os que encontrei têm de 5 a 6 caracteres, então acredito que 10 seja suficiente.                               |
 | `nome`  | `NVARCHAR(100)` | Nome completo do ativo. Dificilmente existirão ativos com nome maior que 100 caracteres.                                                   |
 
+<br/>
+
 ---
+
+<br/>
 
 ### `tbCotacoes`
 
@@ -37,7 +47,11 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 | `preco_unitario` | `DECIMAL(10,2)` | Preço atual da ação ou ativo. Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                                        |
 | `data_hora`      | `DATETIME2`     | Data/hora da cotação. O `DATETIME` também poderia ser utilizado, mas o MSDN recomenda o uso de `DATETIME2` para novas implementações.            |
 
+<br/>
+
 ---
+
+<br/>
 
 ### `tbOperacoes`
 
@@ -52,7 +66,32 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 | `corretagem`     | `DECIMAL(10,2)`     | Valor da corretagem aplicada à operação. Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                             |
 | `data_hora`      | `DATETIME2`         | Data e hora da operação. O `DATETIME` também poderia ser utilizado, mas o MSDN recomenda o uso de `DATETIME2` para novas implementações.         |
 
+### 🔍 Indíce
+
+Foi criado o índice `idx_tbOperacoes_usuario_ativo_data` para melhorar a performance da query que consulta as operações de um determinado usuário e ativo em um período de tempo. Essa query poderia ser utilizada assim:
+
+<br/>
+
+```sql
+DECLARE @usuario_id UNIQUEIDENTIFIER = 'meu usuário'
+DECLARE @ativo_id INT = 1
+DECLARE @numero_dias INT = 30
+
+SELECT *
+FROM tbOperacoes
+WHERE usuario_id = @usuario_id
+  AND ativo_id = @ativo_id
+  AND data_hora > DATEADD(DAY, -@numero_dias, GETDATE())
+ORDER BY data_hora DESC;
+``````
+
+     
+<br/>
+<br/>
+
 ---
+
+<br/>
 
 ### `tbPosicoes`
 
