@@ -68,7 +68,10 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 
 ### 🔍 Indíce
 
-Foi criado o índice `idx_tbOperacoes_usuario_ativo_data` para melhorar a performance da query que consulta as operações de um determinado usuário e ativo em um período de tempo. Essa query poderia ser utilizada assim:
+Foi criado o índice `idx_tbOperacoes_usuario_ativo_data` para melhorar a performance de consultas das operações de um determinado usuário e ativo em um período de tempo. 
+O índice evita a realização de table scans na tabela de operações em busca de um usuário ou ativo. As demais colunas da tabela de operações não foram incluídas no índice por que isso penalizaria a
+operação de inserção e não traria mudanças tão significativas nas consultas.
+Um exemplo de query que utilizaria esse índice seria:
 
 <br/>
 
