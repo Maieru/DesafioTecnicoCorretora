@@ -1,5 +1,6 @@
 ﻿using Corretora.Bussiness.Database;
 using Corretora.Bussiness.Services;
+using Corretora.Model.Enums;
 using Corretora.Model.Models;
 using Corretora.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -57,14 +58,10 @@ namespace Corretora.Web.Controllers
                 return NotFound();
 
             var ativosEnvolvidos = new List<int>();
-
             var operacaoService = new OperacaoService(_context);
 
-            var comprasUsuario = await operacaoService.GetTotalInvestidoPorAtivo(usuarioId);
-            ativosEnvolvidos.AddRange(comprasUsuario.Keys);
-
-            var vendasUsuario = await operacaoService.GetTotalVendasPorAtivo(usuarioId);
-            ativosEnvolvidos.AddRange(vendasUsuario.Keys);
+            var operacoesUsuario = await operacaoService.GetOperacoesUsuario(usuarioId);
+            ativosEnvolvidos.AddRange(operacoesUsuario.Select(o => o.AtivoId));
 
             var totalCorretagem = await operacaoService.GetTotalCorretagem(usuarioId);
 
@@ -86,19 +83,25 @@ namespace Corretora.Web.Controllers
             foreach (var ativo in ativos)
             {
                 var posicaoAtivo = posicoesUsuario.FirstOrDefault(p => p.AtivoId == ativo.Id);
+                var operacoesAtivo = operacoesUsuario.Where(o => o.AtivoId == ativo.Id).ToList();
+
+                var operacoesCompraAtivo = operacoesAtivo.Where(o => o.TipoOperacao == TipoOperacao.Compra).ToList();
+                var operacoesVendaAtivo = operacoesAtivo.Where(o => o.TipoOperacao == TipoOperacao.Venda).ToList();
 
                 var dadosDoAtivo = new DadosPorAtivoViewModel
                 {
                     NomeAtivo = ativo.Nome,
                     CodigoAtivo = ativo.Codigo,
-                    TotalInvestido = comprasUsuario.ContainsKey(ativo.Id) ? comprasUsuario[ativo.Id] : 0,
-                    TotalVendido = vendasUsuario.ContainsKey(ativo.Id) ? vendasUsuario[ativo.Id] : 0,
+                    TotalInvestido = operacoesCompraAtivo?.Sum(o => o.Quantidade * o.PrecoUnitario + o.Corretagem) ?? 0,
+                    TotalVendido = operacoesVendaAtivo?.Sum(o => o.Quantidade * o.PrecoUnitario + o.Corretagem) ?? 0,
                 };
 
                 if (posicaoAtivo != null)
                 {
                     dadosDoAtivo.QuantidadeTotal = posicaoAtivo.Quantidade;
-                    dadosDoAtivo.PrecoMedio = posicaoAtivo.PrecoMedio;
+
+                    // Daria para utilizar o dado de preço médio da posição, mas quero usar o método de calculo do preço médio
+                    dadosDoAtivo.PrecoMedio = operacaoService.CalculaPrecoMedioDasCompras(operacoesCompraAtivo) ?? 0;
                     dadosDoAtivo.Resultado = posicaoAtivo.PL;
                 }
 

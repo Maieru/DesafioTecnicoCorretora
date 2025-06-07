@@ -57,36 +57,6 @@ namespace Corretora.Bussiness.Services
         }
 
         /// <summary>
-        /// Recupera o total investido em um ativo de um usuário, sem considerar as vendas.
-        /// </summary>
-        /// <param name="usuarioId">O id do usuário a ser consultado.</param>
-        /// <param name="codigoAtivo">O código do ativo sendo consultado.</param>
-        /// <returns>O valor total investido nesse ativo.</returns>
-        public async Task<decimal> GetTotalInvestidoPorAtivo(Guid usuarioId, string codigoAtivo)
-        {
-            return await _context.Operacoes
-                .Include(o => o.Ativo)
-                .Where(o => o.UsuarioId == usuarioId && o.TipoOperacao == TipoOperacao.Compra && o.Ativo.Codigo == codigoAtivo)
-                .AsNoTracking()
-                .SumAsync(o => o.Quantidade * o.PrecoUnitario + o.Corretagem);
-        }
-
-        /// <summary>
-        /// Recupera o total de vendas de um ativo de um usuário.
-        /// </summary>
-        /// <param name="usuarioId">O id do usuário a ser consultado.</param>
-        /// <param name="codigoAtivo">O código do ativo sendo consultado.</param>
-        /// <returns>O valor total investido nesse ativo.</returns>
-        public async Task<decimal> GetTotalVendasPorAtivo(Guid usuarioId, string codigoAtivo)
-        {
-            return await _context.Operacoes
-                .Include(o => o.Ativo)
-                .Where(o => o.UsuarioId == usuarioId && o.TipoOperacao == TipoOperacao.Venda && o.Ativo.Codigo == codigoAtivo)
-                .AsNoTracking()
-                .SumAsync(o => o.Quantidade * o.PrecoUnitario + o.Corretagem);
-        }
-
-        /// <summary>
         /// Recupera o total de corretagem de um usuário.
         /// </summary>
         /// <param name="usuarioId">O id do usuário a ser consultado.</param>
@@ -131,6 +101,44 @@ namespace Corretora.Bussiness.Services
             return await _context.Database.ExecuteSqlInterpolatedAsync($@"
                 INSERT INTO tbOperacoes (usuario_id, ativo_id, quantidade, preco_unitario, tipo_operacao, corretagem, data_hora)
                 VALUES ({operacao.UsuarioId}, {operacao.AtivoId}, {operacao.Quantidade}, {operacao.PrecoUnitario}, '0', {operacao.Corretagem}, {operacao.DataHora})");
+        }
+
+        /// <summary>
+        /// Recupera todas as operações de um usuário específico.
+        /// </summary>
+        /// <param name="usuarioId">O id do usuário a ser consultado.</param>
+        /// <returns>A lista de operações do usuário.</returns>
+        public async Task<List<Operacao>> GetOperacoesUsuario(Guid usuarioId)
+        {
+            return await _context.Operacoes.Where(o => o.UsuarioId == usuarioId).AsNoTracking().ToListAsync();
+        }
+
+        /// <summary>
+        /// Calcula a média ponderada das operações de compra.
+        /// </summary>
+        /// <param name="operacoes">Lista de operações para ser calculada.</param>
+        /// <returns>O preço médio de todas as operações de compra. Caso náo exista nenhuma operação de compra, retorna nulo.</returns>
+        public decimal? CalculaPrecoMedioDasCompras(List<Operacao> operacoes)
+        {
+            if (operacoes == null || operacoes.Count == 0)
+                return null;
+
+            decimal totalValor = 0;
+            int totalQuantidade = 0;
+
+            foreach (var operacao in operacoes)
+            {
+                if (operacao.Quantidade <= 0 || operacao.PrecoUnitario < 0 || operacao.TipoOperacao != TipoOperacao.Compra)
+                    continue;
+
+                totalValor += operacao.Quantidade * operacao.PrecoUnitario;
+                totalQuantidade += operacao.Quantidade;
+            }
+
+            if (totalQuantidade == 0)
+                return null;
+
+            return Math.Round(totalValor / totalQuantidade, 2);
         }
     }
 }
