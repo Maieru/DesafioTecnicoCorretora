@@ -15,12 +15,6 @@ namespace Corretora.Web.Controllers
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
             int pageSize = 10;
-
-            var teste = _context.Ativos.FirstOrDefault();
-            var teste2 = _context.Cotacoes.FirstOrDefault();
-            var teste3 = _context.Operacoes.FirstOrDefault();
-            var teste4 = _context.Posicoes.FirstOrDefault();
-
             var usuarios = _context.Usuarios.OrderBy(u => u.Nome).Select(u => UsuarioViewModel.FromUsuario(u));
             return View(await ListaPaginada<UsuarioViewModel>.CreateAsync(usuarios.AsNoTracking(), pageNumber, pageSize));
         }
@@ -52,12 +46,12 @@ namespace Corretora.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UsuarioViewModel usuario)
+        public async Task<IActionResult> Edit(UsuarioViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("Form", usuario);
+                return View("Form", model);
 
-            _context.Usuarios.Update(usuario.ToUsuario());
+            _context.Usuarios.Update(model.ToUsuario());
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
