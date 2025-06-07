@@ -6,7 +6,11 @@ Este projeto consiste em um sistema completo para controle de investimentos, des
 
 # 📌 Requisitos do Desafio
 
+<br />
+
 ## 1. Modelagem de Banco Relacional
+
+<br />
 
 A modelagem foi implementada em T-SQL (SQL Server) e está disponível no seguinte script consolidado:  
 🔗 [bancoConsolidado.sql](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Database/bancoConsolidado.sql)
@@ -14,7 +18,12 @@ A modelagem foi implementada em T-SQL (SQL Server) e está disponível no seguin
 A justificativa dos tipos utilizados em cada campo, os índices aplicados e as triggers configuradas estão documentadas aqui:  
 📝 [Explicações e Estrutura do Banco](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Database/README.md)
 
+
+<br />
+
 ---
+
+<br />
 
 ## 2. Índices e Performance
 
@@ -33,7 +42,11 @@ Dois índices foram criados para otimizar as principais consultas:
 ⚙️ Triggers desenvolvidas:  
 - [Triggers SQL](https://github.com/Maieru/DesafioTecnicoCorretora/tree/main/src/Database/Triggers)
 
+<br />
+
 ---
+
+<br />
 
 ## 3. Aplicação
 
@@ -51,7 +64,11 @@ A estrutura segue uma arquitetura em camadas simplificada:
 📦 Código-fonte:  
 [Repositório src](https://github.com/Maieru/DesafioTecnicoCorretora/tree/main/src)
 
+<br />
+
 ---
+
+<br />
 
 ## 4. Lógica de Negócio
 
@@ -61,7 +78,11 @@ Toda a lógica está encapsulada na camada `Business`, incluindo os cálculos fi
 🔹 [OperacaoService.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.Bussiness/Services/OperacaoService.cs) – lógica de compra, corretagem, preço médio e totais  
 🔹 [PosicaoService.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.Bussiness/Services/PosicaoService.cs) – cálculo da posição global e por ativo
 
+<br />
+
 ---
+
+<br />
 
 ## 5. Integração entre Sistemas
 
@@ -72,4 +93,34 @@ Esse worker é responsável por validar e salvar atualizações de cotações.
 ⚙️ Código do worker:  
 [MonitorCotacoesWorker.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.MonitorCotacoes/MonitorCotacoesWorker.cs)
 
+<br />
+
 ---
+
+<br />
+
+# ✨ Funcionalidades Extras
+
+Além dos requisitos principais, o projeto também conta com funcionalidades adicionais que contribuem para testes, simulações e validações mais robustas:
+
+### 🧪 Geração de Dados Sintéticos com Python
+
+Foi desenvolvido um script Python para gerar automaticamente dados sintéticos para popular o banco com milhares de registros de usuários, ativos, operações e cotações.  
+Esse recurso facilita testes de performance e demonstração de funcionalidades em escala.
+
+🔗 [Script Python para preenchimento do banco](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Database/Ferramentas/preencheBancoDeDados.py)
+
+<br />
+
+---
+
+<br />
+
+### 📡 Worker Kafka para Geração de Cotações
+
+Além do worker que consome mensagens Kafka, foi desenvolvido um segundo **Worker Service** em .NET que simula o envio contínuo de novas cotações para os ativos cadastrados, publicando mensagens no tópico `cotacoes`.
+
+Esse componente é útil para testes de integração e simulações em tempo real.
+
+🔗 [Gerador de Cotações via Kafka](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.MonitorCotacoes/GeradorCotacoesWorker.cs)
+
