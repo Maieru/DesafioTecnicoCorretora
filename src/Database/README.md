@@ -47,6 +47,15 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 | `preco_unitario` | `DECIMAL(10,2)` | Preço atual da ação ou ativo. Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                                        |
 | `data_hora`      | `DATETIME2`     | Data/hora da cotação. O `DATETIME` também poderia ser utilizado, mas o MSDN recomenda o uso de `DATETIME2` para novas implementações.            |
 
+### ⚡ Trigger
+
+A trigger `trgAtualizaPL_AposInsertCotacao` foi criada na tabela `tbCotacoes` com o objetivo de atualizar automaticamente o **P&L (Profit and Loss)** das posições dos usuários sempre que uma nova cotação for registrada para um ativo.
+
+Quando um novo registro é inserido em `tbCotacoes`, a trigger:
+
+- Identifica o ativo associado à nova cotação.
+- Atualiza o campo `pl` de todas as posições relacionadas a esse ativo.
+
 <br/>
 
 ---
@@ -66,7 +75,7 @@ Esse arquivo contém todos os comandos necessários para criar o banco e suas ta
 | `corretagem`     | `DECIMAL(10,2)`     | Valor da corretagem aplicada à operação. Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                             |
 | `data_hora`      | `DATETIME2`         | Data e hora da operação. O `DATETIME` também poderia ser utilizado, mas o MSDN recomenda o uso de `DATETIME2` para novas implementações.         |
 
-### 🔍 Indíce
+### 🔍 Indíces
 
 Foi criado o índice `idx_tbOperacoes_usuario_ativo_data` para melhorar a performance de consultas das operações de um determinado usuário e ativo em um período de tempo. 
 O índice evita a realização de table scans na tabela de operações em busca de um usuário ou ativo. As demais colunas da tabela de operações não foram incluídas no índice por que isso penalizaria a
@@ -88,8 +97,20 @@ WHERE usuario_id = @usuario_id
 ORDER BY data_hora DESC;
 ``````
 
-     
-<br/>
+### ⚡ Triggers
+
+A trigger `trgAtualizaPosicao_AposInsertOperacao` foi criada na tabela `tbOperacoes` com o objetivo de manter a tabela `tbPosicoes` sempre sincronizada com as movimentações de compra e venda realizadas pelos usuários.
+
+Sempre que um novo registro é inserido em `tbOperacoes`, a trigger:
+
+- Verifica se já existe uma posição do usuário para o ativo negociado.
+- Caso exista:
+  - Se a operação for uma compra ('0'), atualiza a quantidade total e recalcula o preço médio ponderado.
+  - Se for uma venda ('1'), reduz a quantidade da posição. O preço médio permanece inalterado.
+- Caso a posição ainda não exista:
+  - Insere um novo registro em tbPosicoes com os dados iniciais (quantidade, preço médio, etc.).
+- Em ambos os casos, busca a cotação mais recente do ativo e atualiza o P&L (lucro/prejuízo) da posição com base na diferença entre o preço atual e o preço médio.
+
 <br/>
 
 ---
@@ -106,3 +127,20 @@ ORDER BY data_hora DESC;
 | `quantidade`   | `INT`               | Quantidade atual do ativo em carteira. Se o Elon Musk for investir utilizando a corretora, talvez seja necessário usar um `BIGINT`.              |
 | `preco_medio`  | `DECIMAL(10,2)`     | Preço médio de aquisição. Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                                            |
 | `pl`           | `DECIMAL(12,2)`     | Lucro/Prejuízo atual (Profit & Loss / P&L). Dependendo do negócio, talvez seja necessário o uso de mais casas decimais.                          |
+
+### 🔍 Indíces
+
+Foi criado o índice `idx_tbPosicoes_ativo_usuario` para melhorar a performance das triggers `trgAtualizaPosicao_AposInsertOperacao` e `trgAtualizaPL_AposInsertCotacao`. O índice evita a realização de table scan na busca das posições de um determinado ativo e/ou usuário. Foram incluídas todas as colunas da tabela porque imagino que serão feitas muito mais consultas do que inserções ou atualizações nessa tabela.
+Um exemplo de query que utilizaria esse índice seria:
+
+<br/>
+
+```sql
+DECLARE @usuario_id UNIQUEIDENTIFIER = 'meu usuário'
+DECLARE @ativo_id INT = 1
+
+SELECT *
+FROM tbPosicoes 
+WHERE usuario_id = @usuario_id
+	AND ativo_id = @ativo_id
+``````
