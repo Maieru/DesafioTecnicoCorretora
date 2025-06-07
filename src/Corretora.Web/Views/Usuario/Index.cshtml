@@ -1,0 +1,62 @@
+﻿@model ListaPaginada<UsuarioViewModel>
+
+@{
+    ViewData["Title"] = "Usuários";
+    int maxPagesToShow = 5;
+    int startPage = Math.Max(1, Model.NumeroPagina - maxPagesToShow / 2);
+    int endPage = Math.Min(Model.NumeroPaginas, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Usuários</h2>
+        <a asp-action="Create" class="btn btn-success">Criar Novo Usuário</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Corretagem (%)</th>
+                    <th scope="col" class="text-center">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.Nome</td>
+                        <td>@usuario.Email</td>
+                        <td>@usuario.PercCorretagem</td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@usuario.Id" class="btn btn-sm btn-primary">Editar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <nav aria-label="Navegação de páginas">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.NumeroPagina - 1)">Anterior</a>
+            </li>
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == Model.NumeroPagina ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.NumeroPagina + 1)">Próxima</a>
+            </li>
+        </ul>
+    </nav>
+</div>
