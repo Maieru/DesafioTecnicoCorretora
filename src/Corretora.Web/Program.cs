@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// O certo seria colocar em um vault key, mas como isso é só uma atividade, vamos deixar assim.
+// O certo seria colocar em um vault key, mas como isso é só uma atividade, vou deixar assim.
 var sqlServerConnectionString = "data source=.\\SQLEXPRESS;initial catalog=corretora;trusted_connection=true;TrustServerCertificate=True";
 
 // Add services to the container.
