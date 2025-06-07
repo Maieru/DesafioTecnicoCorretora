@@ -57,6 +57,7 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="Triggers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\tbUsuario.sql" />
@@ -64,6 +65,8 @@
     <Build Include="Tables\tbOperacoes.sql" />
     <Build Include="Tables\tbCotacoes.sql" />
     <Build Include="Tables\tbPosicoes.sql" />
+    <Build Include="Triggers\trgAtualizaPosicao_AposInsertOperacao.sql" />
+    <Build Include="Triggers\trgAtualizaPL_AposInsertCotacao.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bancoConsolidado.sql" />

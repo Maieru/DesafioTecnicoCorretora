@@ -6,3 +6,8 @@
     [preco_medio]   DECIMAL(10,2)     NOT NULL,
     [pl]            DECIMAL(12,2)     NOT NULL
 );
+GO
+
+CREATE NONCLUSTERED INDEX idx_tbPosicoes_ativo_usuario
+ON tbPosicoes (ativo_id, usuario_id);
+GO

@@ -6,17 +6,16 @@ from datetime import datetime, timedelta
 
 num_usuarios = 10000
 num_ativos = 10000
-operacoes_por_usuario = 10  # Para cada usuário, uma operação (ajustável se necessário)
+operacoes_por_usuario = 30
 
-# Inicializa Faker novamente para consistência
 faker = Faker("pt_BR")
 Faker.seed(0)
 random.seed(0)
 
-# Gerar usuários e armazenar GUIDs
 usuarios_inserts = []
 usuario_ids = []
 
+# Usuários
 for _ in range(num_usuarios):
     user_id = str(uuid.uuid4())
     usuario_ids.append(user_id)
@@ -27,8 +26,9 @@ for _ in range(num_usuarios):
         f"INSERT INTO tbUsuarios (id, nome, email, perc_corretagem) VALUES ('{user_id}', '{nome}', '{email}', {perc_corretagem});"
     )
 
-# Gerar ativos
+# Ativos e Cotações
 ativos_inserts = []
+cotacoes_inserts = []
 
 for i in range(1, num_ativos + 1):
     codigo = f"{faker.random_uppercase_letter()}{faker.random_uppercase_letter()}{random.randint(1000,9999)}"
@@ -37,7 +37,13 @@ for i in range(1, num_ativos + 1):
         f"INSERT INTO tbAtivos (codigo, nome) VALUES ('{codigo}', '{nome}');"
     )
 
-# Gerar operações (1 por usuário, com ativos aleatórios)
+    preco_unitario = round(random.uniform(5.00, 150.00), 2)
+    data_hora = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    cotacoes_inserts.append(
+        f"INSERT INTO tbCotacoes (ativo_id, preco_unitario, data_hora) VALUES ({i}, {preco_unitario}, '{data_hora}');"
+    )
+
+# Operações
 operacoes_inserts = []
 
 for usuario_id in usuario_ids:
@@ -55,9 +61,9 @@ for usuario_id in usuario_ids:
             f"VALUES ('{usuario_id}', {ativo_id}, {quantidade}, {preco_unitario}, '{tipo_operacao}', {corretagem}, '{data_hora}');"
         )
 
-# Junta todos os comandos SQL
-script_sql_completo = "\n".join(usuarios_inserts + ativos_inserts + operacoes_inserts)
+# Combinar tudo
+script_sql_completo = "\n".join(usuarios_inserts + ativos_inserts + cotacoes_inserts + operacoes_inserts)
 
-# Salva em arquivo único
-full_sql_path = Path(".\popular_todas_tabelas.sql")
-full_sql_path.write_text(script_sql_completo, encoding="utf-8")
+# Salvar em arquivo
+output_path = Path("popular_todas_tabelas_com_cotacoes.sql")
+output_path.write_text(script_sql_completo, encoding="utf-8")
