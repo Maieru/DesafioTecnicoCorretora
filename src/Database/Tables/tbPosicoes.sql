@@ -9,5 +9,6 @@
 GO
 
 CREATE NONCLUSTERED INDEX idx_tbPosicoes_ativo_usuario
-ON tbPosicoes (ativo_id, usuario_id);
+ON tbPosicoes (ativo_id, usuario_id)
+INCLUDE (quantidade, preco_medio, pl);
 GO
