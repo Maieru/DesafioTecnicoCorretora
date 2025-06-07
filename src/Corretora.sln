@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corretora.Bussiness", "Corr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corretora.Model", "Corretora.Model\Corretora.Model.csproj", "{C3B0AB48-9323-4243-A5EA-599259A432A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corretora.MonitorCotacoes", "Corretora.WorkerService\Corretora.MonitorCotacoes.csproj", "{133326F1-BFFD-4492-81A6-03AEE3B3829A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corretora.MonitorCotacoes", "Corretora.MonitorCotacoes\Corretora.MonitorCotacoes.csproj", "{133326F1-BFFD-4492-81A6-03AEE3B3829A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
