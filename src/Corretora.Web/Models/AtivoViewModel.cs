@@ -15,6 +15,10 @@ namespace Corretora.Web.Models
         [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
         public string Nome { get; set; }
 
+        [Required(ErrorMessage = "O preço do ativo é obrigatório.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero.")]
+        public decimal CotacaoAtual { get; set; }
+
         public Ativo ToAtivo()
         {
             return new Ativo

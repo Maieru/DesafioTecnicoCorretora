@@ -98,5 +98,39 @@ namespace Corretora.Bussiness.Services
                 .AsNoTracking()
                 .SumAsync(o => o.Corretagem);
         }
+
+        /// <summary>
+        /// Realiza a compra de um ativo.
+        /// </summary>
+        /// <param name="usuarioId">O id do usuário que está comprando o ativo</param>
+        /// <param name="ativoId">O id do ativo sendo comprado</param>
+        /// <param name="quantidade">A quantidade de ativos sendo comprados</param>
+        /// <returns>A quantidade de registros inseridos</returns>
+        public async Task<int> RealizaCompra(Guid usuarioId, int ativoId, int quantidade)
+        {
+            var cotacaoService = new CotacaoService(_context);
+            var cotacaoAtual = await cotacaoService.GetCotacaoAtualAtivo(ativoId);
+            var taxaCorretagemUsuario = await _context.Usuarios.Where(u => u.Id == usuarioId)
+                .Select(u => u.PercCorretagem)
+                .FirstOrDefaultAsync();
+
+            var operacao = new Operacao()
+            {
+                UsuarioId = usuarioId,
+                AtivoId = ativoId,
+                Quantidade = quantidade,
+                PrecoUnitario = cotacaoAtual,
+                TipoOperacao = TipoOperacao.Compra
+            };
+
+            var corretagem = cotacaoAtual * quantidade * (taxaCorretagemUsuario / 100);
+            operacao.Corretagem = Math.Round(corretagem, 2);
+            operacao.DataHora = DateTime.UtcNow;
+
+            // Não consigo usar o EF Core para inserir diretamente o registro com o .Add por causa da trigger do banco de dados.
+            return await _context.Database.ExecuteSqlInterpolatedAsync($@"
+                INSERT INTO tbOperacoes (usuario_id, ativo_id, quantidade, preco_unitario, tipo_operacao, corretagem, data_hora)
+                VALUES ({operacao.UsuarioId}, {operacao.AtivoId}, {operacao.Quantidade}, {operacao.PrecoUnitario}, '0', {operacao.Corretagem}, {operacao.DataHora})");
+        }
     }
 }

@@ -1,0 +1,36 @@
+﻿@model OperacaoViewModel
+
+@{
+    ViewData["Title"] = "Comprar Ativo";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Comprar Ativo</h2>
+
+    <form asp-action="Comprar" method="post">
+        <input type="hidden" asp-for="UsuarioId" />
+
+        <div class="mb-3">
+            <label asp-for="AtivoId" class="form-label"></label>
+            <select asp-for="AtivoId" class="form-select" asp-items="Model.Ativos">
+                <option value="">-- Selecione um ativo --</option>
+            </select>
+            <span asp-validation-for="AtivoId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Quantidade" class="form-label"></label>
+            <input asp-for="Quantidade" class="form-control" />
+            <span asp-validation-for="Quantidade" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Confirmar Compra</button>
+        <a asp-controller="Usuario" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

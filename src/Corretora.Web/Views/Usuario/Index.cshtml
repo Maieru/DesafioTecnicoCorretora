@@ -36,6 +36,7 @@
                         <td>@usuario.PercCorretagem</td>
                         <td class="text-center">
                             <a asp-action="Edit" asp-route-id="@usuario.Id" class="btn btn-sm btn-primary">Editar</a>
+                            <a asp-controller="Operacao" asp-action="Comprar" asp-route-usuarioId="@usuario.Id" class="btn btn-sm btn-success">Comprar Ativo</a>
                         </td>
                     </tr>
                 }

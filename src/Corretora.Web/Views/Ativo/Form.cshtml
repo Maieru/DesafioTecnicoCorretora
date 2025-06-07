@@ -25,6 +25,12 @@
             <span asp-validation-for="Nome" class="text-danger"></span>
         </div>
 
+        <div class="mb-3">
+            <label asp-for="CotacaoAtual" class="form-label"></label>
+            <input asp-for="CotacaoAtual" class="form-control" readonly="@(Model.Id != 0)" type="number" />
+            <span asp-validation-for="CotacaoAtual" class="text-danger"></span>
+        </div>
+
         <button type="submit" class="btn btn-primary">Salvar</button>
         <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
     </form>

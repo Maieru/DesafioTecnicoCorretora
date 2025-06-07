@@ -1,4 +1,5 @@
 ﻿using Corretora.Bussiness.Database;
+using Corretora.Bussiness.Services;
 using Corretora.Model.Models;
 using Corretora.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,9 @@ namespace Corretora.Web.Controllers
                 return NotFound();
 
             var viewModel = AtivoViewModel.FromAtivo(ativo);
+            var cotacaoService = new CotacaoService(_context);
+            viewModel.CotacaoAtual = await cotacaoService.GetCotacaoAtualAtivo(ativo.Id);
+
             return View("Form", viewModel);
         }
 
@@ -45,6 +49,10 @@ namespace Corretora.Web.Controllers
             var ativo = model.ToAtivo();
             _context.Ativos.Add(ativo);
             await _context.SaveChangesAsync();
+
+            var cotacaoService = new CotacaoService(_context);
+            await cotacaoService.SalvaCotacao(model.CotacaoAtual, ativo.Id);
+
             return RedirectToAction("Index");
         }
 
@@ -52,7 +60,7 @@ namespace Corretora.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AtivoViewModel model)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
                 return View("Form", model);
 
             _context.Update(model.ToAtivo());
