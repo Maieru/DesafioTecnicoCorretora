@@ -131,3 +131,16 @@ Sempre que um novo registro é inserido em `tbOperacoes`, a trigger:
 ### 🔍 Indíces
 
 Foi criado o índice `idx_tbPosicoes_ativo_usuario` para melhorar a performance das triggers `trgAtualizaPosicao_AposInsertOperacao` e `trgAtualizaPL_AposInsertCotacao`. O índice evita a realização de table scan na busca das posições de um determinado ativo e/ou usuário. Foram incluídas todas as colunas da tabela porque imagino que serão feitas muito mais consultas do que inserções ou atualizações nessa tabela.
+Um exemplo de query que utilizaria esse índice seria:
+
+<br/>
+
+```sql
+DECLARE @usuario_id UNIQUEIDENTIFIER = 'meu usuário'
+DECLARE @ativo_id INT = 1
+
+SELECT *
+FROM tbPosicoes 
+WHERE usuario_id = @usuario_id
+	AND ativo_id = @ativo_id
+``````
