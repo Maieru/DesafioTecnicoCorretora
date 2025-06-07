@@ -44,7 +44,7 @@ CREATE TABLE [dbo].[tbOperacoes] (
     [ativo_id]			INT				 NOT NULL REFERENCES tbAtivos(id),
     [quantidade]		INT				 NOT NULL,
     [preco_unitario]	DECIMAL(10,2)    NOT NULL,
-    [tipo_operacao]		CHAR(1)          NOT NULL,
+    [tipo_operacao]		INT              NOT NULL,
     [corretagem]		DECIMAL(10,2)    NOT NULL,
     [data_hora]			DATETIME2        NOT NULL
 );

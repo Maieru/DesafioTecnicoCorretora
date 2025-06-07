@@ -24,11 +24,11 @@ namespace Corretora.Bussiness.Services
         /// </summary>
         /// <param name="usuarioId">O id do usuário a ser consultado.</param>
         /// <returns>Um dicionário cujo a chave é o código do ativo e o valor é o total investido nesse ativo.</returns>
-        public async Task<Dictionary<string, decimal>> GetTotalInvestidoPorAtivo(Guid usuarioId)
+        public async Task<Dictionary<int, decimal>> GetTotalInvestidoPorAtivo(Guid usuarioId)
         {
             return await _context.Operacoes
                 .Where(o => o.UsuarioId == usuarioId && o.TipoOperacao == TipoOperacao.Compra)
-                .GroupBy(o => o.Ativo.Codigo)
+                .GroupBy(o => o.Ativo.Id)
                 .Select(g => new
                 {
                     Ativo = g.Key,
@@ -42,11 +42,11 @@ namespace Corretora.Bussiness.Services
         /// </summary>
         /// <param name="usuarioId">O id do usuário a ser consultado.</param>
         /// <returns>Um dicionário cujo a chave é o código do ativo e o valor é o total vendido nesse ativo.</returns>
-        public async Task<Dictionary<string, decimal>> GetTotalVendasPorAtivo(Guid usuarioId)
+        public async Task<Dictionary<int, decimal>> GetTotalVendasPorAtivo(Guid usuarioId)
         {
             return await _context.Operacoes
                 .Where(o => o.UsuarioId == usuarioId && o.TipoOperacao == TipoOperacao.Venda)
-                .GroupBy(o => o.Ativo.Codigo)
+                .GroupBy(o => o.Ativo.Id)
                 .AsNoTracking()
                 .Select(g => new
                 {

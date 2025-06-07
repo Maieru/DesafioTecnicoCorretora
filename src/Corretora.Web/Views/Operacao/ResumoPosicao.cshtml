@@ -1,0 +1,44 @@
+﻿@model ResumoComprasViewModel
+
+@{
+    ViewData["Title"] = "Resumo de Compras";
+}
+
+<div class="container mt-4">
+    <h2>Resumo de Compras - @Model.NomeUsuario</h2>
+
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>Codigo do Ativo</th>
+                <th>Nome do Ativo</th>
+                <th>Total Comprado (R$)</th>
+                <th>Total Vendido (R$)</th>
+                <th>Quantidade Atual</th>
+                <th>Preço Médio (R$)</th>
+                <th>Resultado (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.DadosAtivos)
+            {
+                <tr>
+                    <td>@item.CodigoAtivo</td>
+                    <td>@item.NomeAtivo</td>
+                    <td>@item.TotalInvestido.ToString("C")</td>
+                    <td>@item.TotalVendido.ToString("C")</td>
+                    <td>@item.QuantidadeTotal</td>
+                    <td>@item.PrecoMedio.ToString("C")</td>
+                    <td class="fw-bold" style="color:@(item.Resultado < 0 ? "#dc3545" : "#198754")">@item.Resultado.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <h5>Total de Corretagem: <span class="fw-semibold">@Model.TotalCorretagem.ToString("C")</span></h5>
+        <h5>Resultado Global: <span class="fw-bold" style="color:@(Model.ResultadoGlobal < 0 ? "#dc3545" : "#198754")">@Model.ResultadoGlobal.ToString("C")</span></h5>
+    </div>
+
+    <a asp-controller="Usuario" asp-action="Index" class="btn btn-secondary mt-4">Voltar</a>
+</div>

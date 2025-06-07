@@ -33,7 +33,7 @@ namespace Corretora.Model.Models
         [Required, Column("preco_unitario", TypeName = "decimal(10,2)")]
         public decimal PrecoUnitario { get; set; }
 
-        [Required, Column("tipo_operacao", TypeName = "char(1)")]
+        [Required, Column("tipo_operacao")]
         public TipoOperacao TipoOperacao { get; set; }
 
         [Required, Column("corretagem", TypeName = "decimal(10,2)")]
