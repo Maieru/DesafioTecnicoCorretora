@@ -32,6 +32,11 @@ Dois índices foram criados para otimizar as principais consultas:
 - `idx_tbOperacoes_usuario_ativo_data`: melhora o desempenho ao consultar operações por usuário e ativo em um intervalo de tempo.
 - `idx_tbPosicoes_ativo_usuario`: utilizado nas triggers para acelerar a recuperação das posições por ativo e usuário.
 
+Foram criadas as seguintes triggers no banco de dados:
+
+- `trgAtualizaPL_AposInsertCotacao.sql`: atualiza as posições após a inserção de uma nova cotação para um ativo.
+- `trgAtualizaPosicao_AposInsertOperacao.sql`: atualiza as posições após a inserção de um registro de operação.
+
 📄 Scripts dos índices:  
 - [tbOperacoes.sql](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Database/Tables/tbOperacoes.sql)  
 - [tbPosicoes.sql](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Database/Tables/tbPosicoes.sql)
