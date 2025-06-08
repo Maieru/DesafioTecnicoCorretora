@@ -79,8 +79,8 @@ A estrutura segue uma arquitetura em camadas simplificada:
 
 Toda a lógica está encapsulada na camada `Business`, incluindo os cálculos financeiros e regras de negócio.
 
-🔹 [CotacaoService.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.Bussiness/Services/CotacaoService.cs) – consulta e salvamento de cotações  
 🔹 [OperacaoService.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.Bussiness/Services/OperacaoService.cs) – lógica de compra, corretagem, preço médio e totais  
+🔹 [CotacaoService.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.Bussiness/Services/CotacaoService.cs) – consulta e salvamento de cotações  
 🔹 [PosicaoService.cs](https://github.com/Maieru/DesafioTecnicoCorretora/blob/main/src/Corretora.Bussiness/Services/PosicaoService.cs) – cálculo da posição global e por ativo
 
 <br />
